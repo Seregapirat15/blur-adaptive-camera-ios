@@ -85,12 +85,15 @@ extension CameraSession: AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
+/// connection.videoOrientation = .portrait уже поворачивает буфер в портрет.
+/// Поэтому EXIF-тег должен говорить «ничего не крутить» (.up),
+/// иначе CIImage.oriented() повернёт уже портретный буфер ещё раз на 90°.
 private func cgImageOrientation(for videoOrientation: AVCaptureVideoOrientation) -> CGImagePropertyOrientation {
     switch videoOrientation {
-    case .portrait: return .right
-    case .portraitUpsideDown: return .left
-    case .landscapeRight: return .up
-    case .landscapeLeft: return .down
-    @unknown default: return .right
+    case .portrait:           return .up
+    case .portraitUpsideDown: return .down
+    case .landscapeRight:     return .up
+    case .landscapeLeft:      return .up
+    @unknown default:         return .up
     }
 }

@@ -138,7 +138,7 @@ final class CameraViewModel: NSObject, ObservableObject, CameraSessionDelegate {
         return CGFloat(0.12) + b * CGFloat(0.95)
     }
 
-    private func normalizedBlur(from variance v: Float) -> Float {
+    private func normalizedBlur(from v: Float) -> Float {
         let low: Float = 55
         let high: Float = 320
         let t = (v - low) / max(high - low, 1)

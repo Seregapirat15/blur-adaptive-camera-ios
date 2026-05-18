@@ -1,0 +1,44 @@
+---
+config:
+  flowchart:
+    curve: linear
+    defaultRenderer: elk
+---
+flowchart TB
+    START(["Запуск приложения"])
+    PERM{"Есть разрешение<br/>на камеру?"}
+    REQ["Запрос разрешения на камеру"]
+    PERM2{"Пользователь<br/>разрешил?"}
+    EXIT(["Выход"])
+    INIT["Инициализация камеры<br/>AVCaptureSession"]
+    SETUP["Настройка VideoDataOutput<br/>720p, портрет, BGRA"]
+    LOOP(["Начало цикла обработки кадров"])
+    FRAME["Получение нового кадра<br/>CVPixelBuffer"]
+    PREP["Подготовка кадра<br/>ориентация для Core Image"]
+    BLUR["Оценка размытости<br/>BlurAnalyzer"]
+    OK{"Анализ кадра<br/>успешен?"}
+    RESET["Сброс оверлей / метрик"]
+    RELEASE1["Освобождение очереди кадра"]
+    GRID["Карта размытости по сетке 16×12"]
+    ADAPTRES["Адаптация размера анализа WxH"]
+    METRICS["Вычисление Blur и Var"]
+    PARAMS["Пересчёт параметров резкости"]
+    SMOOTH["Сглаживание Sharpness и Radius"]
+    CORR{"Коррекция резкости вкл?"}
+    SHARP["CISharpenLuminance"]
+    SKIPSHARP["Кадр без шарпена"]
+    UIQ["Передача данных в UI-поток"]
+    DRAW["Отрисовка превью и теплокарты"]
+    RELEASE2["Освобождение очереди кадра"]
+
+    START --> PERM
+    PERM -->|Нет| REQ --> PERM2
+    PERM2 -->|Нет| EXIT
+    PERM2 -->|Да| INIT
+    PERM -->|Да| INIT
+    INIT --> SETUP --> LOOP --> FRAME --> PREP --> BLUR --> OK
+    OK -->|Нет| RESET --> RELEASE1 --> FRAME
+    OK -->|Да| GRID --> ADAPTRES --> METRICS --> PARAMS --> SMOOTH --> CORR
+    CORR -->|Да| SHARP --> UIQ
+    CORR -->|Нет| SKIPSHARP --> UIQ
+    UIQ --> DRAW --> RELEASE2 --> FRAME

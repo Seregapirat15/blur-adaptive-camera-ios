@@ -154,8 +154,8 @@ final class BlurAnalyzer {
     private func statisticalVariance(_ values: [Float]) -> Float {
         guard values.count > 1 else { return 0 }
         let n = Float(values.count)
-        let mean = values.reduce(0, +) / n
-        let sq = values.reduce(0) { partial, v in
+        let mean = values.reduce(Float(0)) { $0 + $1 } / n
+        let sq = values.reduce(Float(0)) { partial, v in
             let d = v - mean
             return partial + d * d
         }

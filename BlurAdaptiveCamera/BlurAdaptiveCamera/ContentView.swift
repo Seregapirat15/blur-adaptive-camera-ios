@@ -139,7 +139,7 @@ private struct HeatmapOverlayView: View {
                     let idx = gy * columns + gx
                     guard idx < sharpness.count else { continue }
                     let s = sharpness[idx]
-                    let blur = max(0, min(1, 1 - s))
+                    let blur = CGFloat(max(0, min(1, 1 - s)))
 
                     let rect = CGRect(x: CGFloat(gx) * cw, y: CGFloat(gy) * ch, width: cw, height: ch)
                     let color = heatColor(blur: blur)

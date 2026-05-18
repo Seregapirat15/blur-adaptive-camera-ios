@@ -1,0 +1,24 @@
+---
+config:
+  flowchart:
+    curve: linear
+    defaultRenderer: elk
+---
+flowchart TB
+    UI["UI интерфейс"]
+    CAM["Камера AVFoundation"]
+    FRAME["Получение кадра CVPixelBuffer"]
+    BLUR["Оценка размытости BlurAnalyzer"]
+    DEC{"Анализ кадра<br/>успешен?"}
+    EMPTY["Пустой оверлей"]
+    CONT["Продолжаем алгоритм"]
+    MAP["Карта размытости по сетке кадра"]
+    PREV["Пересчёт параметров резкости<br/>для области превью"]
+    SMOOTH["Сглаживание параметров шарпена"]
+    ADAPT["Адаптация силы CISharpen по Blur"]
+    UPDATE["Обновление теплокарты и метрик<br/>Blur, Var"]
+    DRAW["Отрисовка"]
+
+    UI --> CAM --> FRAME --> BLUR --> DEC
+    DEC -->|Да| CONT --> MAP --> PREV --> SMOOTH --> ADAPT --> UPDATE --> DRAW
+    DEC -->|Нет| EMPTY
